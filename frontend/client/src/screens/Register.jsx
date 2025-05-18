@@ -31,8 +31,12 @@ function Register() {
     try {
       await authApi.register(submitData);
       toast.success("Registration successful!");
-      // Or, to redirect after registration, use:
-      window.location.href = "/";
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user?.role === "admin") {
+        window.location.href = "/admin/dashboard";
+      } else {
+        window.location.href = "/dashboard";
+      }
     } catch (error) {
       toast.error(
         error.response?.data?.message || error.message || "Registration failed"

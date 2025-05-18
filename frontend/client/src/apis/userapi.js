@@ -17,19 +17,21 @@ userApi.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Authentication APIs
+// ✅ Authentication APIs
 export const authApi = {
   register: async (userData) => {
     try {
       const response = await userApi.post('/register', userData);
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
+      const { token, data } = response.data;
+
+      if (token && data) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(data));
       }
+
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -39,9 +41,13 @@ export const authApi = {
   login: async (identifier, password) => {
     try {
       const response = await userApi.post('/login', { identifier, password });
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
+      const { token, data } = response.data;
+
+      if (token && data) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(data));
       }
+
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -50,6 +56,7 @@ export const authApi = {
 
   logout: () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     return Promise.resolve();
   },
 
@@ -72,7 +79,7 @@ export const authApi = {
   }
 };
 
-// Email Verification APIs
+// ✅ Email Verification APIs
 export const emailVerificationApi = {
   sendVerificationEmail: async (email) => {
     try {
@@ -93,13 +100,12 @@ export const emailVerificationApi = {
   }
 };
 
-
-// User Profile APIs
+// ✅ User Profile APIs
 export const userProfileApi = {
   getMe: async () => {
     try {
       const response = await userApi.get('/me');
-      return response.data.data; // Adjust based on backend response shape
+      return response.data.data;
     } catch (error) {
       throw error.response?.data || error.message;
     }
@@ -107,7 +113,7 @@ export const userProfileApi = {
 
   updateProfile: async (updates) => {
     try {
-      const response = await userApi.put('/me', updates); // Assuming backend uses /me for current user update
+      const response = await userApi.put('/me', updates);
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
       }
@@ -119,7 +125,10 @@ export const userProfileApi = {
 
   updatePassword: async (currentPassword, newPassword) => {
     try {
-      const response = await userApi.put('/update-password', { currentPassword, newPassword });
+      const response = await userApi.put('/update-password', {
+        currentPassword,
+        newPassword
+      });
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -127,7 +136,7 @@ export const userProfileApi = {
   }
 };
 
-// Admin APIs
+// ✅ Admin APIs
 export const adminUserApi = {
   getAllUsers: async () => {
     try {
