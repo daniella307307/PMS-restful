@@ -25,7 +25,7 @@ function Login() {
       // Call login with two separate params, as per your API definition
       await authApi.login(formData.identifier, formData.password);
       toast.success("Login successful!");
-      window.location.href = "/";
+      window.location.href = "/dashboard";
     } catch (error) {
       toast.error(error.message || "Login failed");
     }

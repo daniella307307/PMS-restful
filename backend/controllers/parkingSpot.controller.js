@@ -1,4 +1,4 @@
-const ParkingSpot = require('../models/parkingSpot.model');
+const ParkingSpot = require('../models/ParkingSpot.model');
 const ParkingLot = require('../models/parkingLot.model');
 const { createParkingSpotSchema, updateParkingSpotSchema } = require('../schema/parkingSpot.schema');
 

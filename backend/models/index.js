@@ -2,7 +2,7 @@
 const sequelize = require('../config/db'); // Your sequelize instance
 const User = require('./User.model');
 const ParkingLot = require('./parkingLot.model');
-const ParkingSpot = require('./parkingSpot.model');
+const ParkingSpot = require('./ParkingSpot.model');
 const Vehicle = require('./vehicle.model');
 const Booking = require('./booking.model');
 
