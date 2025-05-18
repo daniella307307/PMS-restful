@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const { registerUserSchema } = require("../schema/user.schema");
 const generateToken = require("../utils/jwt.util");
 const sendEmail =require("../utils/emailVerification");
-
+require('dotenv').config();
 // @desc    Login user
 // @route   POST /api/users/login
 // @access  Public
@@ -224,14 +224,24 @@ exports.registerUser = async (req, res) => {
 // @desc    Update user profile
 // @route   PUT /api/users/:id
 // @access  Private
-
 exports.updateUser = async (req, res) => {
   try {
+    // Ensure the ID is properly parsed as an integer
     const targetUserId = parseInt(req.params.id);
+    
+    // Check if the ID is valid
+    if (isNaN(targetUserId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID",
+      });
+    }
+
+    // Rest of your existing code...
     const loggedInUserId = parseInt(req.user.id);
     const loggedInUserRole = req.user.role;
 
-    // Authorization: Users can only update themselves unless they are admin
+    // Authorization check
     if (loggedInUserRole !== "admin" && loggedInUserId !== targetUserId) {
       return res.status(403).json({
         success: false,
@@ -239,88 +249,7 @@ exports.updateUser = async (req, res) => {
       });
     }
 
-    const userToUpdate = await User.findByPk(targetUserId);
-    if (!userToUpdate) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    // Prevent role update unless admin
-    if (req.body.role && loggedInUserRole !== "admin") {
-      return res.status(403).json({
-        success: false,
-        message: "Not authorized to update user role",
-      });
-    }
-
-    // Prevent password update here
-    if (req.body.password) {
-      delete req.body.password;
-    }
-
-    // Fields allowed to update
-    const allowedUpdates = ['username', 'birthday', 'phoneNumber', 'address', 'profileImage', 'status'];
-    if (loggedInUserRole === 'admin') {
-      allowedUpdates.push('role', 'emailVerified');
-    }
-
-    const updates = {};
-    for (const key in req.body) {
-      if (allowedUpdates.includes(key)) {
-        updates[key] = req.body[key];
-      }
-    }
-
-    // If updating email, ensure it's unique and mark email as unverified
-    if (req.body.email && req.body.email !== userToUpdate.email) {
-      const existingEmailUser = await User.findOne({ where: { email: req.body.email } });
-      if (existingEmailUser && existingEmailUser.id !== targetUserId) {
-        return res.status(400).json({ success: false, message: "Email already in use." });
-      }
-      updates.email = req.body.email;
-      updates.emailVerified = false;
-    }
-
-    // Perform update (MySQL-safe)
-    const [affectedRows] = await User.update(updates, {
-      where: { id: targetUserId },
-      individualHooks: true
-    });
-
-    if (affectedRows === 0) {
-      return res.status(400).json({ success: false, message: "User not found or update failed" });
-    }
-
-    // Fetch updated user
-    const updatedUser = await User.findByPk(targetUserId);
-    const userResponse = updatedUser.toJSON();
-    delete userResponse.password;
-
-    // Generate new token if role was changed
-    let newToken;
-    if (updates.role && (loggedInUserId === targetUserId || loggedInUserRole === "admin")) {
-      newToken = generateToken(updatedUser);
-    }
-
-    const responsePayload = {
-      success: true,
-      data: userResponse,
-    };
-
-    if (newToken) {
-      responsePayload.token = newToken;
-    }
-
-    if (updates.email && updates.email !== userToUpdate.email) {
-      responsePayload.message = "Profile updated. Please verify your new email address.";
-      // Optionally trigger verification email:
-      // await exports.sendVerificationEmail({ body: { email: updatedUser.email } }, res, true);
-    }
-
-    return res.status(200).json(responsePayload);
-
+    // Continue with your existing logic...
   } catch (error) {
     console.error("Update User Error:", error);
     return res.status(500).json({
@@ -507,9 +436,16 @@ exports.updatePassword = async (req, res) => {
 
     const { currentPassword, newPassword } = req.body;
 
+    // Check if passwords are provided
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Both current and new passwords are required",
+      });
+    }
+
     // Check current password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
-
     if (!isMatch) {
       return res.status(401).json({
         success: false,
@@ -519,8 +455,9 @@ exports.updatePassword = async (req, res) => {
 
     // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
 
-    await user.update({ password: hashedPassword });
+    await user.save();
 
     res.status(200).json({
       success: true,
@@ -529,7 +466,7 @@ exports.updatePassword = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message || "Failed to update password",
     });
   }
 };
@@ -537,21 +474,31 @@ exports.updatePassword = async (req, res) => {
 // @desc    Forgot password - generate reset token
 // @route   POST /api/users/forgot-password
 // @access  Public
+// Enhanced forgotPassword controller
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({ where: { email } });
-
-    if (!user) {
-      return res.status(404).json({
+    if (!email) {
+      return res.status(400).json({
         success: false,
-        message: "No user found with this email",
+        message: "Email is required",
       });
     }
 
-    // Generate reset token (simple version - in production use crypto)
-    const resetToken = Math.random().toString(36).slice(2);
+    const user = await User.findOne({ where: { email } });
+
+    // Always return success to prevent email enumeration
+    if (!user) {
+      return res.status(200).json({
+        success: true,
+        message: "If an account exists with this email, a reset link has been sent",
+      });
+    }
+
+    // Generate secure reset token using crypto
+    const crypto = require('crypto');
+    const resetToken = crypto.randomBytes(20).toString('hex');
     const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour from now
 
     await user.update({
@@ -559,18 +506,86 @@ exports.forgotPassword = async (req, res) => {
       resetTokenExpiry,
     });
 
-    // In production: Send email with reset link
-    // await sendResetEmail(user.email, resetToken);
+    // Send email with reset link
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    const emailSubject = "Password Reset Request";
+    const emailHtml = `
+      <p>You requested a password reset for your account.</p>
+      <p>Click this link to reset your password:</p>
+      <a href="${resetUrl}">${resetUrl}</a>
+      <p>This link will expire in 1 hour.</p>
+      <p>If you didn't request this, please ignore this email.</p>
+    `;
+
+    await sendEmail(user.email, emailSubject, emailHtml);
 
     res.status(200).json({
       success: true,
-      message: "Password reset token generated",
-      resetToken, // In production, don't send this in response
+      message: "If an account exists with this email, a reset link has been sent",
     });
   } catch (error) {
+    console.error("Forgot password error:", error);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Error processing password reset request",
+    });
+  }
+};
+
+// Enhanced resetPassword controller
+exports.resetPassword = async (req, res) => {
+  try {
+    const { resetToken } = req.params;
+    const { newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters",
+      });
+    }
+
+    const user = await User.findOne({
+      where: {
+        resetToken,
+        resetTokenExpiry: { [Op.gt]: new Date() },
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired reset token",
+      });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await user.update({
+      password: hashedPassword,
+      resetToken: null,
+      resetTokenExpiry: null,
+    });
+
+    // Send confirmation email
+    const emailSubject = "Password Changed Successfully";
+    const emailHtml = `
+      <p>Your password has been successfully changed.</p>
+      <p>If you didn't make this change, please contact us immediately.</p>
+    `;
+
+    await sendEmail(user.email, emailSubject, emailHtml);
+
+    res.status(200).json({
+      success: true,
+      message: "Password reset successful",
+    });
+  } catch (error) {
+    console.error("Reset password error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error resetting password",
     });
   }
 };

@@ -13,6 +13,10 @@ import MyBookings from './components/MyBookings'
 import ParkingLots from './components/ParkingLots'
 import CreateParkingLot from './components/CreateParkingLot'
 import ParkingSpot from './components/ParkingSpot'
+import CreateBooking from './components/CreateBooking'
+import CreateBookingForm from './components/CreateBookingForm'
+import ResetPasswordPage from './components/ResetPasswordPage'
+import ErrorBoundary from './errors/ErrorBoundary'
 
 function App() {
   return (
@@ -29,6 +33,9 @@ function App() {
         <Route path='/parking-lots' element={<PrivateRoute><ParkingLots/></PrivateRoute>}/>
         <Route path='/admin/create-parking-lot' element={<PrivateRoute><CreateParkingLot/></PrivateRoute>}/>
         <Route path='/parking-spots' element={<PrivateRoute><ParkingSpot/></PrivateRoute>}/>
+        <Route path='/book' element={<PrivateRoute><CreateBooking/></PrivateRoute>}/>
+        <Route path='/create-booking-form' element={<PrivateRoute><CreateBookingForm/></PrivateRoute>}/>
+        <Route path='/reset-password/:resetToken' element={<ErrorBoundary><ResetPasswordPage/></ErrorBoundary>}/>
       </Routes>
     </Router> 
     <ToastContainer position="top-right" autoClose={3000} pauseOnHover />

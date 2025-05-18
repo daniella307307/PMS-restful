@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { authApi } from "../apis/userapi";
 import { toast } from "react-toastify";
-import { Link, Navigate, replace } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     identifier: "",
     password: "",
@@ -11,6 +12,8 @@ function Login() {
 
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [isSendingReset, setIsSendingReset] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const handleTextChange = (field) => (e) => {
     setFormData((prev) => ({
@@ -21,25 +24,35 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoggingIn(true);
     try {
-      // Call login with two separate params, as per your API definition
       await authApi.login(formData.identifier, formData.password);
       toast.success("Login successful!");
-      window.location.href = "/dashboard";
+      navigate("/dashboard");
     } catch (error) {
       toast.error(error.message || "Login failed");
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
+    if (!forgotPasswordEmail) {
+      toast.error("Please enter your email");
+      return;
+    }
+    
+    setIsSendingReset(true);
     try {
       await authApi.forgotPassword(forgotPasswordEmail);
-      toast.success("Password reset link sent! Please check your email.");
+      toast.success("If an account exists with this email, a reset link has been sent");
       setShowForgotPassword(false);
       setForgotPasswordEmail("");
     } catch (error) {
       toast.error(error.message || "Failed to send reset link");
+    } finally {
+      setIsSendingReset(false);
     }
   };
 
@@ -68,9 +81,22 @@ function Login() {
           />
           <button
             type="submit"
-            className="bg-[#8176AF] text-white px-6 py-3 rounded-full hover:bg-[#6c5ce7] transition duration-300"
+            disabled={isLoggingIn}
+            className={`bg-[#8176AF] text-white px-6 py-3 rounded-full hover:bg-[#6c5ce7] transition duration-300 flex items-center justify-center ${
+              isLoggingIn ? 'opacity-75' : ''
+            }`}
           >
-            Login
+            {isLoggingIn ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Logging in...
+              </>
+            ) : (
+              'Login'
+            )}
           </button>
         </form>
 
@@ -88,9 +114,10 @@ function Login() {
             FORGOT PASSWORD?
           </span>
         </div>
+        
         {/* Forgot Password Modal/Section */}
         {showForgotPassword && (
-          <div className="mt-6 p-4">
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
             <h2 className="text-lg font-semibold mb-2 text-center">
               Reset Your Password
             </h2>
@@ -109,14 +136,17 @@ function Login() {
               <div className="flex justify-between items-center">
                 <button
                   type="submit"
-                  className="bg-[#8176AF] text-white px-4 py-2 rounded-full hover:bg-[#6c5ce7] transition duration-300"
+                  disabled={isSendingReset}
+                  className={`bg-[#8176AF] text-white px-4 py-2 rounded-full hover:bg-[#6c5ce7] transition duration-300 ${
+                    isSendingReset ? 'opacity-75' : ''
+                  }`}
                 >
-                  Send Reset Link
+                  {isSendingReset ? 'Sending...' : 'Send Reset Link'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowForgotPassword(false)}
-                  className="text-gray-600 hover:underline"
+                  className="text-gray-600 hover:underline text-sm"
                 >
                   Cancel
                 </button>

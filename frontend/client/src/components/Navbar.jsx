@@ -11,7 +11,7 @@ function Navbar() {
   return (
     <>
       {/* Desktop Navbar */}
-      <div className='hidden md:flex justify-between items-center p-4 bg-white text-[#8176AF]'>
+      <div className='hidden width-full md:flex justify-between items-center p-4 bg-white text-[#8176AF]'>
         <FontAwesomeIcon icon={faCar} size='2x' />
         <ul className='flex gap-6 font-medium'>
           <li><a href='#about' className='hover:underline'>ABOUT</a></li>

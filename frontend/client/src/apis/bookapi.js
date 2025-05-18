@@ -2,65 +2,84 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8080/api/bookings';
 
-// Helper to get auth token from localStorage (adjust to your auth implementation)
+// Helper to get auth token from localStorage (adjust if you use another auth method)
 function getAuthHeaders() {
-  const token = localStorage.getItem('token'); // or from context/store
-  return {
-    Authorization: token ? `Bearer ${token}` : '',
-  };
+  const token = localStorage.getItem('token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 export const bookingApi = {
-  // Create booking
+  // Create a new booking
   createBooking: async (bookingData) => {
-    const res = await axios.post(API_BASE_URL, bookingData, {
-      headers: getAuthHeaders(),
-    });
-    return res.data;
+    try {
+      const res = await axios.post(API_BASE_URL, bookingData, {
+        headers: getAuthHeaders(),
+      });
+      return res.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
-  // Get current user's bookings (optionally filtered by status/upcoming)
+  // Get current user's bookings, optional filters { status, upcoming }
   getMyBookings: async (params = {}) => {
-    // params example: { status: 'confirmed', upcoming: 'true' }
-    const res = await axios.get(`${API_BASE_URL}/my-bookings`, {
-      headers: getAuthHeaders(),
-      params,
-    });
-    return res.data;
+    try {
+      const res = await axios.get(`${API_BASE_URL}/my-bookings`, {
+        headers: getAuthHeaders(),
+        params,
+      });
+      return res.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
-  // Get booking by id (accessible by user or admin)
+  // Get booking details by ID (user or admin)
   getBookingById: async (bookingId) => {
-    const res = await axios.get(`${API_BASE_URL}/${bookingId}`, {
-      headers: getAuthHeaders(),
-    });
-    return res.data;
+    try {
+      const res = await axios.get(`${API_BASE_URL}/${bookingId}`, {
+        headers: getAuthHeaders(),
+      });
+      return res.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
-  // Cancel booking by id (user)
+  // Cancel a booking by ID (user)
   cancelBooking: async (bookingId) => {
-    const res = await axios.put(`${API_BASE_URL}/${bookingId}/cancel`, null, {
-      headers: getAuthHeaders(),
-    });
-    return res.data;
+    try {
+      const res = await axios.put(`${API_BASE_URL}/${bookingId}/cancel`, null, {
+        headers: getAuthHeaders(),
+      });
+      return res.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
-  // Admin: update booking status
+  // Admin: Update booking status (e.g., active, completed)
   updateBookingStatusByAdmin: async (bookingId, statusData) => {
-    // statusData example: { status: 'active' }
-    const res = await axios.put(`${API_BASE_URL}/${bookingId}/status`, statusData, {
-      headers: getAuthHeaders(),
-    });
-    return res.data;
+    try {
+      const res = await axios.put(`${API_BASE_URL}/${bookingId}/status`, statusData, {
+        headers: getAuthHeaders(),
+      });
+      return res.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 
-  // Admin: get all bookings with optional filters
+  // Admin: Get all bookings with optional filters (userId, parkingLotId, status)
   getAllBookings: async (params = {}) => {
-    // params example: { userId, parkingLotId, status }
-    const res = await axios.get(API_BASE_URL, {
-      headers: getAuthHeaders(),
-      params,
-    });
-    return res.data;
+    try {
+      const res = await axios.get(API_BASE_URL, {
+        headers: getAuthHeaders(),
+        params,
+      });
+      return res.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   },
 };

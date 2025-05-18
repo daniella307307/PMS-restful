@@ -111,7 +111,7 @@ exports.getMyBookings = async (req, res) => {
     try {
         const { status, upcoming } = req.query;
         const whereClause = { userId: req.user.id };
-
+        console.log(req.user.id)
         if (status) whereClause.status = status;
         if (upcoming === 'true') whereClause.startTime = { [Op.gte]: new Date() };
         else if (upcoming === 'false') whereClause.endTime = { [Op.lt]: new Date() };

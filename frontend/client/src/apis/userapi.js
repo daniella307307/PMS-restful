@@ -103,37 +103,30 @@ export const emailVerificationApi = {
 // ✅ User Profile APIs
 export const userProfileApi = {
   getMe: async () => {
-    try {
-      const response = await userApi.get('/me');
-      return response.data.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
-    }
+    const res = await userApi.get('/me');
+    return res.data;
   },
-
-  updateProfile: async (updates) => {
-    try {
-      const response = await userApi.put('/me', updates);
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
+  // In userApi.js
+updateProfile: async (formData) => {
+  try {
+    // Make sure to include the user ID in the formData
+    const userId = JSON.parse(localStorage.getItem('user')).id;
+    formData.append('id', userId);
+    
+    const res = await userApi.put(`/update/${userId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
       }
-      return response.data.data || response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
-    }
-  },
-
-  updatePassword: async (currentPassword, newPassword) => {
-    try {
-      const response = await userApi.put('/update-password', {
-        currentPassword,
-        newPassword
-      });
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
-    }
+    });
+    return res.data.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
   }
+},
+  updatePassword: async (currentPassword, newPassword) => {
+    const res = await userApi.put('/update-password', { currentPassword, newPassword });
+    return res.data;
+  },
 };
 
 // ✅ Admin APIs

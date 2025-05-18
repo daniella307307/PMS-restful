@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { faCar, faParking, faClipboardList, faHome } from '@fortawesome/free-solid-svg-icons';
+import { faCar, faParking, faClipboardList, faHome, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function Sidebar() {
@@ -34,10 +34,10 @@ function Sidebar() {
       </NavLink>
 
       <NavLink
-        to="/parking-spots"
+        to="/profile"
         className={({ isActive }) => `${linkClass} ${isActive ? activeClass : ''}`}
       >
-        <FontAwesomeIcon icon={faCar}/> Parking Spots
+        <FontAwesomeIcon icon={faUser}/> Profile
       </NavLink>
     </aside>
   );
