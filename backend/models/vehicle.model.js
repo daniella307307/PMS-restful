@@ -15,7 +15,6 @@ const Vehicle = sequelize.define('Vehicle', {
   licensePlate: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true // License plates should be globally unique
   },
   make: {
     type: DataTypes.STRING,

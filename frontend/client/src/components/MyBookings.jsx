@@ -31,6 +31,12 @@ function MyBookings() {
       toast.error("Cancel failed");
     }
   };
+  const handleEntry = async(bookingId)=>{
+
+  }
+  const handleExit = async(bookingId)=>{
+    
+  }
 
   useEffect(() => {
     fetchBookings();
@@ -83,6 +89,16 @@ function MyBookings() {
               Cancel Booking
             </button>
           )}
+          {
+            b.status === 'confirmed' && (
+              <button onClick={()=>handleEntry} className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Enter</button>
+            )
+          }
+                    {
+            b.status === 'pending_payment' && (
+              <button onClick={()=>handleExit} className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Exit</button>
+            )
+          }
         </div>
       ))}
     </div>

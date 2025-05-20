@@ -77,7 +77,7 @@ function CreateBooking() {
             value={formData[field]}
             onChange={handleChange(field)}
             placeholder={field.replace(/([A-Z])/g, " $1").trim()}
-            className="mb-4 w-full p-3 border rounded-lg text-sm bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="mb-4 w-full p-3 border rounded-lg text-sm bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             required
           />
         ))}

@@ -6,7 +6,7 @@ exports.createVehicleSchema = Joi.object({
   make: Joi.string().max(50).optional().allow('', null),
   model: Joi.string().max(50).optional().allow('', null),
   color: Joi.string().max(30).optional().allow('', null),
-  isDefault: Joi.boolean().optional()
+  isDefault: Joi.boolean().optional().default(true)
 }).options({ abortEarly: false });
 
 exports.updateVehicleSchema = Joi.object({

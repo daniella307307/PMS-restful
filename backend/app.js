@@ -11,6 +11,7 @@ const app = express();
 
 // Body parser
 app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 
 // --- Mount Routers ---
 const userRoutes = require('./routes/user.route');

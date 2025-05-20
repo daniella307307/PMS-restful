@@ -28,7 +28,12 @@ function Login() {
     try {
       await authApi.login(formData.identifier, formData.password);
       toast.success("Login successful!");
-      navigate("/dashboard");
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user.role == "admin") {
+        window.location.href = "/admin/dashboard";
+      } else {
+        window.location.href = "/dashboard";
+      }
     } catch (error) {
       toast.error(error.message || "Login failed");
     } finally {

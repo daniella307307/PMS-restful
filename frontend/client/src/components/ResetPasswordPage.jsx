@@ -56,7 +56,7 @@ function ResetPasswordPage() {
               name="newPassword"
               value={formData.newPassword}
               onChange={handleChange}
-              className="bg-gray-100 text-sm px-4 py-3 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-purple-400"
+              className="bg-gray-100 text-sm px-4 py-3 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-indigo-400"
               placeholder="Enter new password"
               required
               minLength="8"
@@ -72,7 +72,7 @@ function ResetPasswordPage() {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="bg-gray-100 text-sm px-4 py-3 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-purple-400"
+              className="bg-gray-100 text-sm px-4 py-3 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-indigo-400"
               placeholder="Confirm new password"
               required
               minLength="8"

@@ -168,7 +168,7 @@ exports.registerUser = async (req, res) => {
       });
     }
 
-    const { username, email, password, birthday, role: reqRole } = value;
+    const { username, email, password, birthday, role,firstName,lastName } = value;
 
     // Check if user already exists
     const existingUser = await User.findOne({
@@ -191,7 +191,9 @@ exports.registerUser = async (req, res) => {
       email,
       password: hashedPassword,
       birthday,
-      role: reqRole || "user", // Use validated role, or default if not in schema/value
+      firstName,
+      lastName,
+      role, // Use validated role, or default if not in schema/value
       emailVerified: false, // Explicitly set to false on registration
     });
 

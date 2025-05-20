@@ -1,7 +1,6 @@
 import './App.css'
 import { BrowserRouter as Router,Routes,Route } from 'react-router-dom'
 import Login from './screens/Login'
-import Home from './screens/Home'
 import PrivateRoute from './protect/PrivateRoute'
 import Register from './screens/Register'
 import { ToastContainer } from 'react-toastify';
@@ -17,6 +16,8 @@ import CreateBooking from './components/CreateBooking'
 import CreateBookingForm from './components/CreateBookingForm'
 import ResetPasswordPage from './components/ResetPasswordPage'
 import ErrorBoundary from './errors/ErrorBoundary'
+import Vehicles from './components/Vehicles'
+import CreateVehicleForm from './components/CreateVehicleForm'
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
     <Router>
       <Routes>
         <Route path='/login' element={<Login/>}/>
-        <Route path='/' element={<Home/>}/>
+        <Route path='/' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path='/profile' element={<PrivateRoute><UserProfile/></PrivateRoute>}/>
         <Route path='/dashboard' element={<PrivateRoute><Dashboard/></PrivateRoute>}/>
@@ -35,7 +36,9 @@ function App() {
         <Route path='/parking-spots' element={<PrivateRoute><ParkingSpot/></PrivateRoute>}/>
         <Route path='/book' element={<PrivateRoute><CreateBooking/></PrivateRoute>}/>
         <Route path='/create-booking-form' element={<PrivateRoute><CreateBookingForm/></PrivateRoute>}/>
+        <Route path='/vehicle' element={<PrivateRoute><Vehicles/></PrivateRoute>}/>
         <Route path='/reset-password/:resetToken' element={<ErrorBoundary><ResetPasswordPage/></ErrorBoundary>}/>
+        <Route path='/create-vehicle' element={<PrivateRoute><CreateVehicleForm/></PrivateRoute>}/>
       </Routes>
     </Router> 
     <ToastContainer position="top-right" autoClose={3000} pauseOnHover />

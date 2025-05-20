@@ -57,7 +57,7 @@ function Dashboard() {
     const fetchProfile = async () => {
       try {
         const data = await userProfileApi.getMe();
-        setUser(data);
+        setUser(data.data);
       } catch (error) {
         toast.error("Failed to load profile");
       } finally {
@@ -73,7 +73,7 @@ function Dashboard() {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
-      <Sidebar />
+      <Sidebar className='hidden'/>
       <div className="p-6">
         <div className="flex flex-wrap justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold text-gray-700">
@@ -84,11 +84,11 @@ function Dashboard() {
             <input
               type="search"
               placeholder="Search for anything"
-              className="border border-gray-300 rounded-full px-4 py-2 outline-none focus:ring-2 focus:ring-purple-500"
+              className="border border-gray-300 rounded-full px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
             />
             <FontAwesomeIcon
               icon={faBell}
-              className="text-purple-500 text-xl cursor-pointer"
+              className="text-indigo-500 text-xl cursor-pointer"
               aria-label="Notifications"
             />
             <img
@@ -101,7 +101,7 @@ function Dashboard() {
 
         {/* Dashboard Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-          <Card className="bg-purple-700 text-white shadow-md">
+          <Card className="bg-indigo-700 text-white shadow-md">
             <CardContent>
               <Typography variant="subtitle1" className="text-gray-500">
                 Total Bookings
@@ -112,7 +112,7 @@ function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-purple-700 text-white shadow-md">
+          <Card className="bg-indigo-700 text-white shadow-md">
             <CardContent>
               <Typography variant="subtitle1" className="text-gray-500">
                 Active Booking
@@ -123,7 +123,7 @@ function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-purple-700 text-white shadow-md">
+          <Card className="bg-indigo-700 text-white shadow-md">
             <CardContent>
               <Typography variant="subtitle1" className="text-gray-500">
                 Upcoming Bookings

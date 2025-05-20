@@ -1,6 +1,8 @@
 const joi = require('joi');
 
 const registerUserSchema = joi.object({
+  firstName:joi.string().required(),
+  lastName:joi.string().required(),
   username: joi.string()
     .alphanum() // Only alphanumeric characters
     .min(3)

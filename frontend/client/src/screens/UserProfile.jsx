@@ -126,7 +126,7 @@ function UserProfile() {
   if (loading)
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
       </div>
     );
 
@@ -134,7 +134,7 @@ function UserProfile() {
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         {/* Profile Header */}
-        <div className="bg-purple-500 px-6 py-4">
+        <div className="bg-indigo-500 px-6 py-4">
           <h2 className="text-2xl font-bold text-white">User Profile</h2>
         </div>
 
@@ -147,15 +147,15 @@ function UserProfile() {
                   <img
                     src={previewImage}
                     alt="Profile"
-                    className="w-32 h-32 rounded-full object-cover border-4 border-purple-200"
+                    className="w-32 h-32 rounded-full object-cover border-4 border-indigo-200"
                   />
                 ) : (
-                  <div className="w-32 h-32 rounded-full bg-purple-500 flex items-center justify-center text-white text-5xl font-bold border-4 border-purple-200">
+                  <div className="w-32 h-32 rounded-full bg-indigo-500 flex items-center justify-center text-white text-5xl font-bold border-4 border-indigo-200">
                     {user?.username?.charAt(0).toUpperCase()}
                   </div>
                 )}
                 {editMode && (
-                  <label className="absolute bottom-0 right-0 bg-purple-500 text-white rounded-full p-2 cursor-pointer hover:bg-purple-600 transition">
+                  <label className="absolute bottom-0 right-0 bg-indigo-500 text-white rounded-full p-2 cursor-pointer hover:bg-indigo-600 transition">
                     <input
                       type="file"
                       accept="image/*"
@@ -181,7 +181,7 @@ function UserProfile() {
               {!editMode && (
                 <button
                   onClick={() => setEditMode(true)}
-                  className="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition"
+                  className="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 transition"
                 >
                   Edit Profile
                 </button>
@@ -201,7 +201,7 @@ function UserProfile() {
                       name="username"
                       value={formData.username}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
 
@@ -227,7 +227,7 @@ function UserProfile() {
                       name="birthday"
                       value={formData.birthday}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
 
@@ -240,7 +240,7 @@ function UserProfile() {
                       name="phoneNumber"
                       value={formData.phoneNumber}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
 
@@ -253,7 +253,7 @@ function UserProfile() {
                       value={formData.address}
                       onChange={handleInputChange}
                       rows="3"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
 
@@ -266,7 +266,7 @@ function UserProfile() {
                       name="status"
                       value={formData.status}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
 
@@ -276,8 +276,8 @@ function UserProfile() {
                       disabled={updatingProfile}
                       className={`px-4 py-2 rounded-md text-white ${
                         updatingProfile
-                          ? "bg-purple-400"
-                          : "bg-purple-500 hover:bg-purple-600"
+                          ? "bg-indigo-400"
+                          : "bg-indigo-500 hover:bg-indigo-600"
                       } transition`}
                     >
                       {updatingProfile ? "Saving..." : "Save Changes"}
@@ -330,7 +330,7 @@ function UserProfile() {
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition"
+                    className="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 transition"
                   >
                     Logout
                   </button>
@@ -354,7 +354,7 @@ function UserProfile() {
                   name="currentPassword"
                   value={passwordData.currentPassword}
                   onChange={handlePasswordChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
               <div className="space-y-2">
@@ -366,7 +366,7 @@ function UserProfile() {
                   name="newPassword"
                   value={passwordData.newPassword}
                   onChange={handlePasswordChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
               <div className="space-y-2 md:col-span-2">
@@ -378,7 +378,7 @@ function UserProfile() {
                   name="confirmPassword"
                   value={passwordData.confirmPassword}
                   onChange={handlePasswordChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
               <div className="md:col-span-2">
@@ -387,8 +387,8 @@ function UserProfile() {
                   disabled={changingPassword}
                   className={`px-4 py-2 rounded-md text-white ${
                     changingPassword
-                      ? "bg-purple-400"
-                      : "bg-purple-500 hover:bg-purple-600"
+                      ? "bg-indigo-400"
+                      : "bg-indigo-500 hover:bg-indigo-600"
                   } transition`}
                 >
                   {changingPassword ? "Updating..." : "Change Password"}

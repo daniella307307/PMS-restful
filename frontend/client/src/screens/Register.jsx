@@ -5,11 +5,14 @@ import { Link } from "react-router-dom";
 
 function Register() {
   const [formData, setFormData] = useState({
+    firstName:'',
+    lastName:'',
     username: "",
     password: "",
     email: "",
     confirmPassword: "",
     birthday: "",
+    role:""
   });
 
   const handleTextChange = (field) => (e) => {
@@ -32,7 +35,7 @@ function Register() {
       await authApi.register(submitData);
       toast.success("Registration successful!");
       const user = JSON.parse(localStorage.getItem("user"));
-      if (user?.role === "admin") {
+      if (user.role == "admin") {
         window.location.href = "/admin/dashboard";
       } else {
         window.location.href = "/dashboard";
@@ -53,6 +56,20 @@ function Register() {
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <input
             type="text"
+            value={formData.firstName}
+            onChange={handleTextChange("firstName")}
+            className="bg-gray-100 text-sm px-4 py-3 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-purple-400"
+            placeholder="Enter your first name"
+          />
+          <input
+            type="text"
+            value={formData.lastName}
+            onChange={handleTextChange("lastName")}
+            className="bg-gray-100 text-sm px-4 py-3 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-purple-400"
+            placeholder="Enter your last name"
+          />
+          <input
+            type="text"
             value={formData.username}
             onChange={handleTextChange("username")}
             className="bg-gray-100 text-sm px-4 py-3 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-purple-400"
@@ -65,6 +82,10 @@ function Register() {
             className="bg-gray-100 text-sm px-4 py-3 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-purple-400"
             placeholder="Enter your email"
           />
+          <select onChange={handleTextChange('role')}>
+            <option value={"user"}>user</option>
+            <option value={"admin"}>admin</option>
+          </select>
           <input
             type="date"
             value={formData.birthday}

@@ -48,7 +48,7 @@ function CreateBookingForm() {
 
   return (
     <div className='flex justify-center items-center w-screen h-screen'>
-      <section className="mb-10 bg-white p-6 rounded-xl shadow-md max-w-lg">
+      <section className="mb-10 bg-white p-6 rounded-xl shadow-md w-[50%]">
         <h2 className="text-xl font-semibold mb-4 text-gray-700">
           Create New Booking
         </h2>
@@ -62,7 +62,7 @@ function CreateBookingForm() {
           <input
             type="number"
             placeholder="Parking Lot ID"
-            className="border border-gray-300 rounded-full px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 transition"
+            className="border border-gray-300 rounded-full px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 transition"
             value={newBookingData.parkingLotId}
             onChange={(e) =>
               setNewBookingData({
@@ -77,7 +77,7 @@ function CreateBookingForm() {
           <input
             type="number"
             placeholder="Parking Spot ID (optional)"
-            className="border border-gray-300 rounded-full px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 transition"
+            className="border border-gray-300 rounded-full px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 transition"
             value={newBookingData.parkingSpotId}
             onChange={(e) =>
               setNewBookingData({
@@ -91,7 +91,7 @@ function CreateBookingForm() {
           <input
             type="number"
             placeholder="Vehicle ID"
-            className="border border-gray-300 rounded-full px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 transition"
+            className="border border-gray-300 rounded-full px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 transition"
             value={newBookingData.vehicleId}
             onChange={(e) =>
               setNewBookingData({
@@ -106,7 +106,7 @@ function CreateBookingForm() {
           <label className="text-sm font-medium text-gray-600">Start Time</label>
           <input
             type="datetime-local"
-            className="border border-gray-300 rounded-full px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 transition"
+            className="border border-gray-300 rounded-full px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 transition"
             value={newBookingData.startTime}
             onChange={(e) =>
               setNewBookingData({
@@ -120,7 +120,7 @@ function CreateBookingForm() {
           <label className="text-sm font-medium text-gray-600">End Time</label>
           <input
             type="datetime-local"
-            className="border border-gray-300 rounded-full px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 transition"
+            className="border border-gray-300 rounded-full px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 transition"
             value={newBookingData.endTime}
             onChange={(e) =>
               setNewBookingData({
@@ -135,7 +135,7 @@ function CreateBookingForm() {
             type="submit"
             disabled={loading}
             className={`${
-              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'
+              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'
             } text-white py-3 rounded-full font-semibold transition`}
           >
             {loading ? 'Booking...' : 'Book Now'}

@@ -5,6 +5,7 @@ import ImageSlider from "../components/ImageSlider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import Services from "../components/Services";
+import { Navigate } from "react-router-dom";
 
 function Home() {
   return (
@@ -27,7 +28,7 @@ function Home() {
             hover:bg-[#C0B7E8] hover:text-[#302C42] transition-all 
             flex gap-2 items-center animate-pulse" // Less aggressive than bounce
               >
-                Join us <FontAwesomeIcon icon={faArrowRight} />
+               <Navigate to='/register'/>
               </button>
             </div>
           </div>
