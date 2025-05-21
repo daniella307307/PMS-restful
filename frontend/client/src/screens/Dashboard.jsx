@@ -38,7 +38,7 @@ function Dashboard() {
         endTime: newBookingData.endTime,
       };
       if (newBookingData.parkingSpotId) {
-        payload.parkingSpotId = Number(newBookingData.parkingSpotId);
+        payload.parkingLotId = Number(newBookingData.parkingSpotId);
       }
       await bookingApi.createBooking(payload);
       toast.success("Booking created");

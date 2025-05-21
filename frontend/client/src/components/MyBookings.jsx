@@ -31,12 +31,29 @@ function MyBookings() {
       toast.error("Cancel failed");
     }
   };
-  const handleEntry = async(bookingId)=>{
+  const handleEntry = async (bookingId) => {
+    try {
+      const response =await axios.post('http://localhost:8080/api/booking/entry', { bookingId });
+      console.log(response);
+      toast.success("Car entry recorded");
+      fetchBookings();
+    } catch (error) {
+      toast.error("Failed to record car entry");
+    }
+  };
 
-  }
-  const handleExit = async(bookingId)=>{
-    
-  }
+  const handleExit = async (bookingId) => {
+    try {
+      const response =await axios.post('http://localhost:8080/api/booking/exit', { bookingId });
+      console.log(response)
+      toast.success("Car exit recorded");
+      fetchBookings();
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to record car exit");
+      
+    }
+  };
 
   useEffect(() => {
     fetchBookings();
@@ -91,12 +108,12 @@ function MyBookings() {
           )}
           {
             b.status === 'confirmed' && (
-              <button onClick={()=>handleEntry} className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Enter</button>
+              <button type="click" onClick={()=>handleEntry(b.id)} className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Enter</button>
             )
           }
                     {
             b.status === 'pending_payment' && (
-              <button onClick={()=>handleExit} className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Exit</button>
+              <button type="click" onClick={()=>handleExit(b.id)} className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Exit</button>
             )
           }
         </div>

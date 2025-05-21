@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { parkingLotApi } from '../apis/parkingapi';
 import { parkingSpotApi } from '../apis/spotapi';
 import { bookingApi } from '../apis/bookapi';
+import { vehicleRoutesApi } from '../apis/vehicleApi';
 import { toast } from 'react-toastify';
 
 function ParkingLots() {
@@ -12,23 +13,38 @@ function ParkingLots() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // For booking details (placeholder example)
-  const [selectedVehicleId, setSelectedVehicleId] = useState(1); // TODO: replace with actual vehicle selection
-  const [startTime, setStartTime] = useState(new Date().toISOString().slice(0,16)); // "YYYY-MM-DDTHH:mm"
-  const [endTime, setEndTime] = useState(new Date(Date.now() + 3600 * 1000).toISOString().slice(0,16)); // +1 hour
+  const [vehicles, setVehicles] = useState([]);
+  const [selectedVehicleId, setSelectedVehicleId] = useState(null);
+
+  const [startTime, setStartTime] = useState(
+    new Date().toISOString().slice(0, 16)
+  );
+  const [endTime, setEndTime] = useState(
+    new Date(Date.now() + 3600 * 1000).toISOString().slice(0, 16)
+  );
 
   useEffect(() => {
-    const fetchParkingLots = async () => {
+    // Fetch lots and user vehicles in parallel
+    const fetchData = async () => {
       try {
-        const data = await parkingLotApi.getLots();
-        setParkingLots(data.data);
+        const [lotsRes, vehiclesRes] = await Promise.all([
+          parkingLotApi.getLots(),
+          vehicleRoutesApi.getMyVehicle(),
+        ]);
+        setParkingLots(lotsRes.data || []);
+        setVehicles(vehiclesRes.data || []);
+        // Set default selected vehicle
+        if (vehiclesRes.data && vehiclesRes.data.length > 0) {
+          setSelectedVehicleId(vehiclesRes.data[0].id);
+        }
       } catch (err) {
-        setError(err.message || 'Failed to fetch parking lots');
+        console.error(err);
+        setError(err.message || 'Failed to fetch data');
       } finally {
         setLoading(false);
       }
     };
-    fetchParkingLots();
+    fetchData();
   }, []);
 
   const toggleSpots = async (lot) => {
@@ -37,6 +53,12 @@ function ParkingLots() {
       setSpots([]);
       return;
     }
+
+    if (!vehicles.length) {
+      toast.info('Please add a vehicle first to make a booking.');
+      return;
+    }
+
     setExpandedLotId(lot.id);
     setLoadingSpots(true);
     try {
@@ -56,7 +78,6 @@ function ParkingLots() {
       return;
     }
 
-    // Validate time inputs
     if (new Date(startTime) >= new Date(endTime)) {
       toast.error('End time must be after start time.');
       return;
@@ -91,6 +112,27 @@ function ParkingLots() {
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold">Your Vehicles</h2>
+        {vehicles.length ? (
+          <select
+            value={selectedVehicleId}
+            onChange={(e) => setSelectedVehicleId(Number(e.target.value))}
+            className="border p-2 rounded"
+          >
+            {vehicles.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.plateNumber} - {v.type}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <p className="text-gray-500">
+            You have no vehicles. <a href="/create-vehicle" className="text-blue-500 underline">Add a vehicle</a> to start booking.
+          </p>
+        )}
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         {parkingLots.map((lot) => (
           <div key={lot.id} className="bg-white shadow-md rounded-xl p-4 border">
@@ -105,74 +147,35 @@ function ParkingLots() {
               <p className="text-sm text-gray-400">Status: {lot.status}</p>
             </div>
 
-            {expandedLotId === lot.id && (
+            {expandedLotId === lot.id && !loadingSpots && spots.length > 0 && (
               <div className="mt-4">
                 <h3 className="text-lg font-semibold mb-2">Spots</h3>
-
-                {/* Booking time inputs */}
-                <div className="mb-4 space-x-4">
-                  <label>
-                    Start Time:{' '}
-                    <input
-                      type="datetime-local"
-                      value={startTime}
-                      onChange={(e) => setStartTime(e.target.value)}
-                      className="border p-1 rounded"
-                    />
-                  </label>
-                  <label>
-                    End Time:{' '}
-                    <input
-                      type="datetime-local"
-                      value={endTime}
-                      onChange={(e) => setEndTime(e.target.value)}
-                      className="border p-1 rounded"
-                    />
-                  </label>
+                <div className="grid grid-cols-4 gap-3">
+                  {spots.map((spot) => (
+                    <div
+                      key={spot.id}
+                      onClick={() => bookSpot(spot)}
+                      className={`p-2 border rounded text-center cursor-pointer ${
+                        spot.status === 'available'
+                          ? 'bg-green-200 hover:bg-green-300'
+                          : 'bg-red-200 cursor-not-allowed'
+                      }`}
+                      title={
+                        spot.status === 'available'
+                          ? 'Click to book this spot'
+                          : 'Not available'
+                      }
+                    >
+                      {spot.spotNumber}
+                    </div>
+                  ))}
                 </div>
-
-                {/* TODO: Replace with real vehicle selector */}
-                <div className="mb-4">
-                  <label>
-                    Vehicle ID:{' '}
-                    <input
-                      type="number"
-                      value={selectedVehicleId}
-                      onChange={(e) => setSelectedVehicleId(Number(e.target.value))}
-                      className="border p-1 rounded w-20"
-                      min={1}
-                    />
-                  </label>
-                  <p className="text-sm text-gray-500">Replace with vehicle dropdown later.</p>
-                </div>
-
-                {loadingSpots ? (
-                  <p>Loading spots...</p>
-                ) : spots.length === 0 ? (
-                  <p className="text-gray-500">No spots found.</p>
-                ) : (
-                  <div className="grid grid-cols-4 gap-3">
-                    {spots.map((spot) => (
-                      <div
-                        key={spot.id}
-                        onClick={() => bookSpot(spot)}
-                        className={`p-2 border rounded text-center cursor-pointer ${
-                          spot.status === 'available'
-                            ? 'bg-green-200 hover:bg-green-300'
-                            : 'bg-red-200 cursor-not-allowed'
-                        }`}
-                        title={
-                          spot.status === 'available'
-                            ? 'Click to book this spot'
-                            : 'Not available'
-                        }
-                      >
-                        {spot.spotNumber}
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
+            )}
+
+            {expandedLotId === lot.id && loadingSpots && <p>Loading spots...</p>}
+            {expandedLotId === lot.id && !loadingSpots && spots.length === 0 && (
+              <p className="text-gray-500 mt-4">No spots found.</p>
             )}
           </div>
         ))}

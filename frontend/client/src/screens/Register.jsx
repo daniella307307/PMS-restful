@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { authApi } from "../apis/userapi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Register() {
   const [formData, setFormData] = useState({
-    firstName:'',
-    lastName:'',
+    firstName: "",
+    lastName: "",
     username: "",
     password: "",
     email: "",
     confirmPassword: "",
     birthday: "",
-    role:""
+    role: "",
   });
+  const navigate = useNavigate();
 
   const handleTextChange = (field) => (e) => {
     setFormData((prev) => ({
@@ -34,12 +35,7 @@ function Register() {
     try {
       await authApi.register(submitData);
       toast.success("Registration successful!");
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (user.role == "admin") {
-        window.location.href = "/admin/dashboard";
-      } else {
-        window.location.href = "/dashboard";
-      }
+      navigate('/login')
     } catch (error) {
       toast.error(
         error.response?.data?.message || error.message || "Registration failed"
@@ -82,9 +78,14 @@ function Register() {
             className="bg-gray-100 text-sm px-4 py-3 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-purple-400"
             placeholder="Enter your email"
           />
-          <select onChange={handleTextChange('role')}>
-            <option value={"user"}>user</option>
-            <option value={"admin"}>admin</option>
+          <select
+            value={formData.role}
+            onChange={handleTextChange("role")}
+            className="bg-gray-100 text-sm px-4 py-3 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-purple-400"
+          >
+            <option value="">Select Role</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
           </select>
           <input
             type="date"

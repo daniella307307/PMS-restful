@@ -1,4 +1,4 @@
-import axios, { Axios } from "axios";
+import axios from "axios";
 
 // Create Axios instance
 const vehicleApi = axios.create({
@@ -12,6 +12,7 @@ const vehicleApi = axios.create({
 vehicleApi.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
+    console.log("Token in localStorage:", localStorage.getItem("token"));
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -36,18 +37,8 @@ function isAdmin() {
 // Exported vehicle API functions
 export const vehicleRoutesApi = {
   createVehicle: async (vehicleData) => {
-    const token = localStorage.getItem("token");
     try {
-      const response = await Axios.post(
-        "http://localhost:8080/api/vehicles",
-        vehicleData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await vehicleApi.post("/", vehicleData);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -63,14 +54,17 @@ export const vehicleRoutesApi = {
     }
   },
 
-  getMyVehicle: async (id) => {
-    try {
-      const response = await vehicleApi.get(`/${id}`);
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
-    }
-  },
+ getMyVehicle: async (filters = {}, page = 1, limit = 10) => {
+  try {
+    const response = await vehicleApi.get('/', {
+      params: { ...filters, page, limit },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+},
+
 
   updateVehicle: async (id, updatedData) => {
     try {

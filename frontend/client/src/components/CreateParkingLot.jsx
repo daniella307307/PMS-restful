@@ -48,6 +48,7 @@ function CreateParkingLot() {
         totalSpots: "",
         availableSpots: "",
       });
+      window.location.href='/admin/dashboard'
     } catch (error) {
       toast.error(error.message || "Failed to create parking lot");
     }
@@ -57,7 +58,7 @@ function CreateParkingLot() {
     return <div className="p-6">Loading...</div>;
   }
 
-  if (user?.role !== "admin") {
+  if (user.role == "admin") {
     return <Navigate to="/dashboard" replace />;
   }
 
