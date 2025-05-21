@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
+const {Op} = require('sequelize');
 
 const Vehicle = sequelize.define('Vehicle', {
   userId: {
@@ -43,7 +44,7 @@ const Vehicle = sequelize.define('Vehicle', {
                  {
                      where: {
                          userId: vehicle.userId,
-                         id: { [DataTypes.Op.ne]: vehicle.id } // Exclude current vehicle
+                         id: { [Op.ne]: vehicle.id } // Exclude current vehicle
                      },
                      transaction: options.transaction
                  }

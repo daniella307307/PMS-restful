@@ -5,15 +5,15 @@ const {
     getMyVehicles,
     getVehicle,
     updateVehicle,
-    deleteVehicle
+    deleteVehicle,
+    getVehicles
 } = require('../controllers/vehicle.controller');
 const { protect } = require('../middleware/authMiddleware'); // No admin role needed for own vehicles
 
 router.use(protect); // All vehicle routes are protected
-
-router.route('/')
-    .post(addVehicle)
-    .get(getMyVehicles);
+router.post('/', protect,addVehicle)
+router.get('/',protect,getMyVehicles)
+router.get('/getall',protect,getVehicles)
 
 router.route('/:id')
     .get(getVehicle)

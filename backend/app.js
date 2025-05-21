@@ -19,6 +19,7 @@ const parkingLotRoutes = require('./routes/parkingLot.route');
 const vehicleRoutes = require('./routes/vehicle.route');
 const bookingRoutes = require('./routes/bookingRoutes');
 const parkingSpotRoutes = require('./routes/parkingSpot.route');
+const entryExitRoute = require('./routes/entryExitRouets')
 //Enable cors
 app.use(cors({origin: '*'}));
 
@@ -29,7 +30,7 @@ app.use('/api/parking-lots', parkingLotRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/parking-lots/:lotId/spots', parkingSpotRoutes);
-
+app.use('/api/booking',entryExitRoute);
 // Global Error Handler (example)
 app.use((err, req, res, next) => {
     console.error("Global Error Handler:", err.stack);

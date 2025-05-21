@@ -1,5 +1,6 @@
 const Vehicle = require('../models/vehicle.model');
 const { createVehicleSchema, updateVehicleSchema } = require('../schema/vehicle.schema');
+const {Op} = require('sequelize');
 
 // @desc    Add a vehicle for the logged-in user
 // @route   POST /api/vehicles (or /api/me/vehicles)
@@ -26,13 +27,50 @@ exports.addVehicle = async (req, res) => {
 // @route   GET /api/vehicles
 // @access  Private
 exports.getMyVehicles = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const { count, rows: vehicles } = await Vehicle.findAndCountAll({
+      where: { userId: req.user.id },
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']],
+    });
+
+    res.status(200).json({
+      success: true,
+      count: vehicles.length,
+      total: count,
+      currentPage: page,
+      totalPages: Math.ceil(count / limit),
+      data: vehicles,
+    });
+  } catch (err) {
+    console.error('Error fetching vehicles:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.getVehicles = async (req, res) => {
     try {
-        const vehicles = await Vehicle.findAll({ where: { userId: req.user.id } });
-        res.status(200).json({ success: true, count: vehicles.length, data: vehicles });
+        const vehicles = await Vehicle.findAll({
+            where: { userId: req.user.id },
+            order: [['createdAt', 'DESC']],
+        });
+
+        res.status(200).json({
+            success: true,
+            count: vehicles.length,
+            data: vehicles,
+        });
     } catch (err) {
+        console.error('Error fetching vehicles:', err);
         res.status(500).json({ success: false, message: err.message });
     }
 };
+
 
 // @desc    Get a specific vehicle by ID (owned by logged-in user)
 // @route   GET /api/vehicles/:id
@@ -46,6 +84,7 @@ exports.getVehicle = async (req, res) => {
         res.status(200).json({ success: true, data: vehicle });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
+        console.error(err);
     }
 };
 
