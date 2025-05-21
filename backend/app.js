@@ -2,12 +2,16 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors= require('cors');
+const setupSwaggerDocs = require('./swagger');
+
 
 
 // Load env vars
 dotenv.config();
 
 const app = express();
+setupSwaggerDocs(app);
+
 
 // Body parser
 app.use(express.json());
